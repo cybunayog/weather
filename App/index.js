@@ -68,6 +68,7 @@ const AppStack = createStackNavigator(
   },
   {
     mode: 'modal',
+    initialRouteName: 'Search'
   }
 );
 

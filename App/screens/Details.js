@@ -123,7 +123,9 @@ export default class Details extends React.Component {
                             {this.state.forecast.map(day => {
                                 return (
                                     <BasicRow key={day.day} style={{ justifyContent: 'space-between'}}>
-                                        <P>{format(new Date(day.day), "EEEE, MMM d")}</P>
+                                        <P>
+                                            {format(new Date(day.day), "EEEE, MMM d")}
+                                        </P>
                                         <View style={{ flexDirection: "row"}}>
                                             <P style={{ fontWeight: '700', marginRight: 10 }}>
                                                 {Math.round(day.temp_max)}°
