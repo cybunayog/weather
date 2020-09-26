@@ -1,0 +1,24 @@
+{
+  "main": "node_modules/expo/AppEntry.js",
+  "name": "weather",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "eject": "expo eject",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "expo": "^38.0.0",
+    "expo-location": "~8.2.1",
+    "expo-permissions": "~9.0.1",
+    "react": "16.11.0",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-38.0.2.tar.gz"
+  },
+  "devDependencies": {
+    "babel-preset-expo": "^8.2.3",
+    "eslint": "^7.4.0",
+    "eslint-config-handlebarlabs": "^0.0.6"
+  },
+  "private": true
+}
