@@ -5,21 +5,31 @@ import { FlatList, Text, View } from 'react-native';
 // Files
 import { SearchBar } from 'weather/App/components/SearchBar';
 import { SearchItem } from 'weather/App/components/List';
+import { getRecentSearch } from 'weather/App/util/recentSearch';
 
 export default class Search extends React.Component {
     state = {
         query: '',
-
+        recentSearch: []
     };
+
+    componentDidMount() {
+        getRecentSearch().then(recentSearch => {
+            this.setState({ recentSearch });
+        })
+    }
 
     render() {
         return (
             <FlatList
-                data={[{ id: 1, name: 'Morrisville' }, { id: 2, name: 'Raleigh' }]}
+                data={this.state.recentSearch}
                 renderItem={({item}) => (
                     <SearchItem
                         name={item.name}
-                        onPress={() => this.props.navigation.navigate('Details')}
+                        onPress={() => this.props.navigation.navigate('Details', {
+                            lat: item.lat,
+                            lon: item.lon
+                        })}
                     />
                 )}
                 keyExtractor={item => item.id.toString()}

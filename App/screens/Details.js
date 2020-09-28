@@ -11,6 +11,7 @@ import { Container } from 'weather/App/components/Container';
 import { WeatherIcon } from 'weather/App/components/WeatherIcon';
 import { BasicRow } from 'weather/App/components/List';
 import { H1, H2, P } from 'weather/App/components/Text';
+import { addRecentSearch } from 'weather/App/util/recentSearch';
 
 const groupForecastByDay = list => {
     const data = {};
@@ -66,15 +67,44 @@ export default class Details extends React.Component {
             });
     }
 
+    componentDidUpdate(prevProps) {
+        const oldZipcode = prevProps.navigation.getParam('zipcode');
+        const zipcode = this.props.navigation.getParam('zipcode');
+        if (zipcode && oldZipcode !== zipcode) {
+            this.getCurrentWeather({ zipcode: zipcode });
+            this.getForecast({ zipcode: zipcode });
+        }
+    }
+
+
+    handleError = () => {
+        Alert.alert('No location data found!', 'Please try again', [
+            {
+                text: 'Okay',
+                onPress: () => this.props.navigation.navigate('Search'),
+            },
+        ]);
+    };
+
     getCurrentWeather = ({ zipcode, coords }) => {
         return weatherAPI('/weather', { zipcode, coords })
             .then(res => {
                 // console.log('current response ', res);
-                this.props.navigation.setParams({ title: res.name });
-                this.setState({
-                    currentWeather: res,
-                    loadingCurrentWeather: false
-                });
+                if (res.cod === '404') {
+                    this.handleError();
+                } else {
+                    this.props.navigation.setParams({ title: res.name });
+                    this.setState({
+                        currentWeather: res,
+                        loadingCurrentWeather: false
+                    });
+                    addRecentSearch({
+                        id: res.id,
+                        name: res.name,
+                        lat: res.coord.lat,
+                        lon: res.coord.lon,
+                    });
+                }
             })
             .catch(err => {
                 console.log('current error ', err);
@@ -84,11 +114,13 @@ export default class Details extends React.Component {
     getForecast = ({ zipcode, coords }) => {
         return weatherAPI('/forecast', { zipcode, coords })
             .then(res => {
-                // console.log('forecast response ', res);
-                this.setState({
-                    loadingForecast: false,
-                    forecast: groupForecastByDay(res.list)
-                })
+                if (res.cod !== '404') {
+                    // console.log('forecast response ', res);
+                    this.setState({
+                        loadingForecast: false,
+                        forecast: groupForecastByDay(res.list)
+                    });
+                }
             })
             .catch(err => {
                 console.log('forecast error ', err);
